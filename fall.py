@@ -1,8 +1,9 @@
 
-
 from tkinter import image_types
+import time
 import pygame
 import random
+username = input("Hi there! welcome to my awesome game. whats your name?\n")
 pygame.init()
 
 
@@ -27,8 +28,7 @@ pygame.display.set_caption("Anika's game")
 anikaImg = pygame.image.load('self.png').convert_alpha()
 space_debris = pygame.image.load('wires.png').convert_alpha()
 belong_inspace = pygame.image.load('astronaut.png')
-heart = pygame.image.load('lives.png')
-num_lives = 3
+
 
 
 class Player(pygame.sprite.Sprite):
@@ -65,6 +65,8 @@ class fallSprites(pygame.sprite.Sprite):
     def is_collided_with(self, anika):
         
         return self.rect.colliderect(anika.rect)
+
+
     
 
 
@@ -76,16 +78,28 @@ background = pygame.image.load("car.jpeg").convert()
 myfont1 = pygame.font.SysFont('Comic Sans MS', 70)
 myfont2 = pygame.font.SysFont('Comic Sans MS', 40)
 myfont3 = pygame.font.SysFont('Comic Sans MS', 40)
+myfont4 = pygame.font.SysFont('Comic Sans MS', 20)
 
 
 y=dis_height
 game_open = True
 game_over = True
+completed = False
 score = 0
+
+lastcollided = []
+multiplier = 1
+
+
+
 while game_open:
     dis.fill(black)
-    title = myfont1.render("Welcome to Space Trip!", True, white)
-    beginbut = myfont2.render("press SPACE to begin", True, white)
+    if completed == False:
+        title = myfont1.render("Welcome to Space Trip!", True, white)
+    else:
+        title = myfont4.render("Mission complete. Time taken: " +str(round(final_time, 2)) + " seconds", True, white)
+        
+    beginbut = myfont4.render("press SPACE to begin a mission", True, white)
     title_rect = title.get_rect(center = (dis_width/2, 300))
     beginbut_rect = beginbut.get_rect(center = (dis_width/2, 400))
     dis.blit(title, title_rect)
@@ -96,11 +110,22 @@ while game_open:
     keys = pygame.key.get_pressed()
 
     if keys[pygame.K_SPACE]:
+        start_time = time.time()
+        print(start_time)
         game_over = False
+        completed = False
+        score = 0
 
+        lastcollided = []
+        multiplier = 1
+
+
+
+     
     
 
     while not game_over:
+
         rel_y = y % background.get_rect().height
         dis.blit(background, (0,rel_y - background.get_rect().height))
         if rel_y < dis_height:
@@ -109,8 +134,11 @@ while game_open:
         dis.blit(anika.image, anika.rect)
         dis.blit(wires.image, wires.rect)
         dis.blit(astronaut.image, astronaut.rect)
-        scoring = myfont3.render("Debris collected: " + str(score), True, white)
+        scoring = myfont3.render(str(username) +"'s score: " + str(score), True, white)
         dis.blit(scoring, (20, 20))
+
+        multipliertext = myfont3.render("Multipler = " + str(multiplier), True, white)
+        dis.blit(multipliertext, (600, 20))
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -126,23 +154,61 @@ while game_open:
        
         wrongitem = 0
         if wires.is_collided_with(anika):
+            lastcollided.append(True)
+            if len(lastcollided) > 3:
+                lastcollided.pop(0)
             wires.restart()
-            score = score+1
+            print(lastcollided)
+            if all(lastcollided) and len(lastcollided) == 3:
+                multiplier = 2
+                print("hey")
+            else:
+                multiplier = 1
+            score = score + (1 * multiplier)
+
         if astronaut.is_collided_with(anika):
+            lastcollided.append(False)
+            if len(lastcollided) > 3:
+                lastcollided.pop(0)
             astronaut.restart()
+            multiplier = 1
             score = score-1
-        
-        xpos_heart = dis_width - 50
-        for x in range(num_lives):
-            dis.blit(heart, (xpos_heart, 20))
-            xpos_heart-= 50
-        
-        if score == 0:
-            num_lives -=1
 
-
+        if score >= 5:
+            print("score reached")
+            final_time = time.time() - start_time
+            game_over = True
+            completed = True
         anika.rect.topleft = [x1, y1]
         wires.update()
         astronaut.update()
         pygame.display.update()
+    
+    # while completed and game_over:
+    #     end = myfont1.render("GAME OVER | " + str(username) + " 's time: " + str(final_time), True, white)
+    #     restart = myfont2.render("Press SPACE to play again", True, white)
+    #     end_rect = end.get_rect(center = (dis_width/2, 300))
+    #     restart_rect = restart.get_rect(center = (dis_width/2, 400))
+    #     dis.blit(end, end_rect)
+    #     dis.blit(restart, restart_rect)
+    #     if keys[pygame.K_SPACE]:
+    #         game_over = False
+    #         completed = False
+    #         break
+    #     pygame.display.update()
+       
+       
+
+
+        
+    
+
+
+
+        
+        
+        
+
+
+
     pygame.display.update()
