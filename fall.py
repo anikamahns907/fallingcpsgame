@@ -10,27 +10,27 @@ pygame.init()
 blue = (50, 153, 213)
 black = (0, 0, 0)
 white = (255, 255, 255)
+red = (255,0,0)
 
 
 dis_width = 800
-dis_height = 700
+dis_height = 750
 
 img_width = 60
 img_height = 64
 
-x1 = dis_width/2 - img_width/2
 
-y1 = 565
 
 dis = pygame.display.set_mode((dis_width, dis_height))
-pygame.display.set_caption("Anika's game")
+pygame.display.set_caption(username + "'s game")
 
 anikaImg = pygame.image.load('self.png').convert_alpha()
 space_debris = pygame.image.load('wires.png').convert_alpha()
 belong_inspace = pygame.image.load('astronaut.png')
+x1 = dis_width/2 - img_width/2
 
 
-
+y1 = 620
 class Player(pygame.sprite.Sprite):
 
     def __init__(self, pos):
@@ -74,11 +74,14 @@ wires = fallSprites(True, space_debris, [random.randint(0,dis_width-30), -20])
 astronaut = fallSprites(False, belong_inspace, [random.randint(0,dis_width-30), -20])
 
 anika = Player([x1, y1])
-background = pygame.image.load("car.jpeg").convert()
+starBackground = pygame.image.load("stars.jpeg").convert()
 myfont1 = pygame.font.SysFont('Comic Sans MS', 70)
 myfont2 = pygame.font.SysFont('Comic Sans MS', 40)
-myfont3 = pygame.font.SysFont('Comic Sans MS', 40)
-myfont4 = pygame.font.SysFont('Comic Sans MS', 20)
+myfont3 = pygame.font.SysFont('Comic Sans MS', 25)
+spaceJunkBackground = pygame.image.load("SpaceJunk.jpg").convert()
+myfont4 = pygame.font.SysFont('Comic Sans MS', 18)
+
+
 
 
 y=dis_height
@@ -94,16 +97,24 @@ multiplier = 1
 
 while game_open:
     dis.fill(black)
+    dis.blit(spaceJunkBackground, (-90,0))
     if completed == False:
-        title = myfont1.render("Welcome to Space Trip!", True, white)
+        title = myfont1.render("Space Debris Clean Up", True, white)
+        text = myfont3.render("Your mission: collect 10 debris pieces as quickly as possible. Watch out for astronauts! ", True, white)
+        instruction = myfont4.render("The earth's atmosphere obtains millions of micro and macro pieces of space junk. It is up to us humans to take action. ", True, red)
     else:
-        title = myfont4.render("Mission complete. Time taken: " +str(round(final_time, 2)) + " seconds", True, white)
+        title = myfont3.render("Mission complete - 10 pieces were collected. Time taken: " +str(round(final_time, 2)) + " seconds", True, white)
+        text = myfont3.render("Each mission takes us a step closer to cleaning Earth's atmosphere.", True, white)
         
-    beginbut = myfont4.render("press SPACE to begin a mission", True, white)
-    title_rect = title.get_rect(center = (dis_width/2, 300))
-    beginbut_rect = beginbut.get_rect(center = (dis_width/2, 400))
+    beginbut = myfont3.render("press SPACE to begin a mission", True, white)
+    title_rect = title.get_rect(center = (dis_width/2, 260))
+    text_rect = text.get_rect(center = (dis_width/2, 350))
+    beginbut_rect = beginbut.get_rect(center = (dis_width/2, 500))
+    instruction_rect = instruction.get_rect(center = (dis_width/2, 730))
     dis.blit(title, title_rect)
+    dis.blit(text, text_rect)
     dis.blit(beginbut, beginbut_rect)
+    dis.blit(instruction, instruction_rect)
     for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 game_open = False
@@ -126,19 +137,19 @@ while game_open:
 
     while not game_over:
 
-        rel_y = y % background.get_rect().height
-        dis.blit(background, (0,rel_y - background.get_rect().height))
+        rel_y = y % starBackground.get_rect().height
+        dis.blit(starBackground, (0,rel_y - starBackground.get_rect().height))
         if rel_y < dis_height:
-            dis.blit(background, (0, rel_y))
+            dis.blit(starBackground, (0, rel_y))
         y+=1
         dis.blit(anika.image, anika.rect)
         dis.blit(wires.image, wires.rect)
         dis.blit(astronaut.image, astronaut.rect)
-        scoring = myfont3.render(str(username) +"'s score: " + str(score), True, white)
+        scoring = myfont2.render(str(username) +"'s score: " + str(score), True, white)
         dis.blit(scoring, (20, 20))
 
-        multipliertext = myfont3.render("Multipler = " + str(multiplier), True, white)
-        dis.blit(multipliertext, (600, 20))
+        multipliertext = myfont3.render("Multipler = X" + str(multiplier), True, white)
+        dis.blit(multipliertext, (20, 60))
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -174,7 +185,7 @@ while game_open:
             multiplier = 1
             score = score-1
 
-        if score >= 5:
+        if score >= 10:
             print("score reached")
             final_time = time.time() - start_time
             game_over = True
@@ -212,3 +223,9 @@ while game_open:
 
 
     pygame.display.update()
+
+
+
+
+
+
