@@ -1,4 +1,3 @@
-
 from tkinter import image_types
 import time
 import pygame
@@ -21,7 +20,6 @@ dis_height = 750
 # dimensions of player's net
 img_width = 60
 img_height = 64
-
 
 
 # display the screen and title 
@@ -105,8 +103,29 @@ lastcollided = []
 # assigning multiplier to 1
 multiplier = 1
 
+def collision(type_sprite):
+    global multiplier
+    global score
+    global lastCollided
+    multiplier = 1
+    num = type_sprite 
+    lastCollided.append(num)
+    if len(lastCollided) > 3:
+        lastCollided.pop(0)
+
+    multiplier = 2
+    for i in lastCollided:
+        if i == 0 or len(lastCollided) < 3:
+            multiplier = 1
+            
+    if num is 1:
+        score += multiplier
+    else:
+        score -= multiplier
 
 
+
+  
 while game_open:
     dis.fill(black)
     dis.blit(spaceJunkBackground, (-90,0))
@@ -189,25 +208,16 @@ while game_open:
        
        # 
         if wires.is_collided_with(anika):
-            lastcollided.append(True)
-            if len(lastcollided) > 3:
-                lastcollided.pop(0)
+            collision(1)
             wires.restart()
-            print(lastcollided)
-            if all(lastcollided) and len(lastcollided) == 3:
-                multiplier = 2
-                print("hey")
-            else:
-                multiplier = 1
-            score = score + (1 * multiplier)
 
         if astronaut.is_collided_with(anika):
-            lastcollided.append(False)
-            if len(lastcollided) > 3:
-                lastcollided.pop(0)
+            collision(0)
             astronaut.restart()
-            multiplier = 1
-            score = score-1
+
+
+        
+    
 
         if score >= 10:
             print("score reached")
@@ -219,37 +229,7 @@ while game_open:
         astronaut.update()
         pygame.display.update()
     
-    # while completed and game_over:
-    #     end = myfont1.render("GAME OVER | " + str(username) + " 's time: " + str(final_time), True, white)
-    #     restart = myfont2.render("Press SPACE to play again", True, white)
-    #     end_rect = end.get_rect(center = (dis_width/2, 300))
-    #     restart_rect = restart.get_rect(center = (dis_width/2, 400))
-    #     dis.blit(end, end_rect)
-    #     dis.blit(restart, restart_rect)
-    #     if keys[pygame.K_SPACE]:
-    #         game_over = False
-    #         completed = False
-    #         break
-    #     pygame.display.update()
-       
-       
-
-
-        
-    
-
-
-
-        
-        
-        
-
+  
 
 
     pygame.display.update()
-
-
-
-
-
-
