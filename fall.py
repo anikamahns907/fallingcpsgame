@@ -117,6 +117,7 @@ def collision(type_sprite):
     for i in lastCollided:
         if i == 0 or len(lastCollided) < 3:
             multiplier = 1
+            break
             
     if num is 1:
         score += multiplier
@@ -206,7 +207,7 @@ while game_open:
         if keys[pygame.K_RIGHT] and x1 < dis_width - 130:
             x1 += 2
        
-       # 
+       # when collision occurs --> call to collision procedure with sprite type
         if wires.is_collided_with(anika):
             collision(1)
             wires.restart()
