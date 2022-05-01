@@ -103,6 +103,7 @@ lastcollided = []
 # assigning multiplier to 1
 multiplier = 1
 
+# procedure managing collisions and effects with mutliplier+score
 def collision(type_sprite):
     global multiplier
     global score
@@ -124,9 +125,8 @@ def collision(type_sprite):
     else:
         score -= multiplier
 
-
-
   
+# game window is open
 while game_open:
     dis.fill(black)
     dis.blit(spaceJunkBackground, (-90,0))
@@ -175,6 +175,7 @@ while game_open:
         lastCollided = []
         multiplier = 1
 
+    # while game is playing
     while not game_over:
         # creating the "moving" background effect
         rel_y = y % starBackground.get_rect().height
@@ -215,22 +216,18 @@ while game_open:
         if astronaut.is_collided_with(anika):
             collision(0)
             astronaut.restart()
-
-
-        
     
-
+        # mission completed
         if score >= 10:
             print("score reached")
             final_time = time.time() - start_time
             game_over = True
             completed = True
+
+
         anika.rect.topleft = [x1, y1]
         wires.update()
         astronaut.update()
         pygame.display.update()
     
-  
-
-
     pygame.display.update()
